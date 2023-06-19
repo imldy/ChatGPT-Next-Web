@@ -21,6 +21,8 @@ import {
   NARROW_SIDEBAR_WIDTH,
   Path,
   REPO_URL,
+  OWNER,
+  OWNER_URL,
 } from "../constant";
 
 import { Link, useNavigate } from "react-router-dom";
@@ -123,7 +125,7 @@ export function SideBar(props: { className?: string }) {
           ChatGPT Next
         </div>
         <div className={styles["sidebar-sub-title"]}>
-          Hello! 欢迎使用 <a href={"https://imldy.cn/"}>imldy</a> 的 ChatGPT
+          Hello! 欢迎使用 <a href={OWNER_URL}>{OWNER}</a> 的 ChatGPT
         </div>
         <div className={styles["sidebar-logo"] + " no-dark"}>
           <ChatGptIcon />
