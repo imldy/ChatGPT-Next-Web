@@ -10,6 +10,8 @@ import ClearIcon from "../icons/clear.svg";
 import LoadingIcon from "../icons/three-dots.svg";
 import EditIcon from "../icons/edit.svg";
 import EyeIcon from "../icons/eye.svg";
+import DownloadIcon from "../icons/download.svg";
+import UploadIcon from "../icons/upload.svg";
 import {
   Input,
   List,
@@ -18,6 +20,7 @@ import {
   PasswordInput,
   Popover,
   Select,
+  showToast,
 } from "./ui-lib";
 import { ModelConfigList } from "./model-config";
 
@@ -37,9 +40,9 @@ import Locale, {
   changeLang,
   getLang,
 } from "../locales";
-import { copyToClipboard } from "../utils";
+import { copyToClipboard, downloadAs, readFromFile } from "../utils";
 import Link from "next/link";
-import { Path, UPDATE_URL } from "../constant";
+import { Path, UPDATE_URL, StoreKey, FileName } from "../constant";
 import { Prompt, SearchService, usePromptStore } from "../store/prompt";
 import { ErrorBoundary } from "./error";
 import { InputRange } from "./input-range";
@@ -286,6 +289,33 @@ export function Settings() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // clear chat history
+  const clearHistory = () => {
+    localStorage.removeItem(StoreKey.Chat);
+    location.reload();
+  };
+
+  // download chat history
+  const chatHistory = JSON.parse(localStorage.getItem(StoreKey.Chat) ?? "");
+  const downloadHistory = () => {
+    downloadAs(JSON.stringify(chatHistory), FileName.History);
+  };
+
+  // upload chat history
+  const importHistory = () => {
+    readFromFile().then((content) => {
+      try {
+        const importChatHistory = JSON.parse(content);
+        localStorage.setItem(StoreKey.Chat, JSON.stringify(importChatHistory));
+        console.log(`[Chat History] Successfully imported!`);
+        showToast(Locale.Settings.ChatHistory.ImportToast);
+        location.reload();
+      } catch (e) {
+        console.error(`[Chat History] Error importing chat history: ${e}`);
+      }
+    });
+  };
+
   const clientConfig = useMemo(() => getClientConfig(), []);
   const showAccessCode = enabledAccessControl && !clientConfig?.isApp;
 
@@ -484,6 +514,40 @@ export function Settings() {
                 )
               }
             ></input>
+          </ListItem>
+        </List>
+
+        <List>
+          <ListItem
+            title={Locale.Settings.ChatHistory.Title}
+            subTitle={Locale.Settings.ChatHistory.SubTitle}
+          >
+            <div className={"password-input-container"}>
+              <IconButton
+                icon={<ClearIcon />}
+                text={Locale.Settings.ChatHistory.Clear}
+                // onClick={() => clearHistory()}
+                onClick={() => {
+                  if (confirm(Locale.Settings.ChatHistory.ClearConfirm)) {
+                    chatStore.clearHistory();
+                  }
+                }}
+              />
+              <IconButton
+                icon={<UploadIcon />}
+                text={Locale.Settings.ChatHistory.Import}
+                onClick={() => {
+                  if (confirm(Locale.Settings.ChatHistory.ImportConfirm)) {
+                    importHistory();
+                  }
+                }}
+              />
+              <IconButton
+                icon={<DownloadIcon />}
+                text={Locale.Settings.ChatHistory.Export}
+                onClick={downloadHistory}
+              />
+            </div>
           </ListItem>
         </List>
 
