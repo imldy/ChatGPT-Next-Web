@@ -296,6 +296,12 @@ const en: LocaleType = {
     Create: "Create",
     Edit: "Edit",
   },
+  Exporter: {
+    Model: "Model",
+    Messages: "Messages",
+    Topic: "Topic",
+    Time: "Time",
+  },
 };
 
 export default en;

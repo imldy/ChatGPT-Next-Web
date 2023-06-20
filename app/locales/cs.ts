@@ -242,6 +242,12 @@ const cs: PartialLocaleType = {
     Create: "Vytvořit",
     Edit: "Upravit",
   },
+  Exporter: {
+    Model: "Model",
+    Messages: "Zprávy",
+    Topic: "Téma",
+    Time: "Čas",
+  },
 };
 
 export default cs;
