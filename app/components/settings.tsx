@@ -51,8 +51,9 @@ import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarPicker } from "./emoji";
 import { getClientConfig } from "../config/client";
 import { useSyncStore } from "../store/sync";
+import { nanoid } from "nanoid";
 
-function EditPromptModal(props: { id: number; onClose: () => void }) {
+function EditPromptModal(props: { id: string; onClose: () => void }) {
   const promptStore = usePromptStore();
   const prompt = promptStore.get(props.id);
 
@@ -110,7 +111,7 @@ function UserPromptModal(props: { onClose?: () => void }) {
   const [searchPrompts, setSearchPrompts] = useState<Prompt[]>([]);
   const prompts = searchInput.length > 0 ? searchPrompts : allPrompts;
 
-  const [editingPromptId, setEditingPromptId] = useState<number>();
+  const [editingPromptId, setEditingPromptId] = useState<string>();
 
   useEffect(() => {
     if (searchInput.length > 0) {
@@ -131,6 +132,8 @@ function UserPromptModal(props: { onClose?: () => void }) {
             key="add"
             onClick={() =>
               promptStore.add({
+                id: nanoid(),
+                createdAt: Date.now(),
                 title: "Empty Prompt",
                 content: "Empty Prompt Content",
               })
