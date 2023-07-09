@@ -654,8 +654,10 @@ export function Settings() {
                 icon={<ClearIcon />}
                 text={Locale.Settings.ChatHistory.Clear}
                 // onClick={() => clearHistory()}
-                onClick={() => {
-                  if (confirm(Locale.Settings.ChatHistory.ClearConfirm)) {
+                onClick={async () => {
+                  if (
+                    await showConfirm(Locale.Settings.ChatHistory.ClearConfirm)
+                  ) {
                     chatStore.clearHistory();
                   }
                 }}
@@ -663,8 +665,10 @@ export function Settings() {
               <IconButton
                 icon={<UploadIcon />}
                 text={Locale.Settings.ChatHistory.Import}
-                onClick={() => {
-                  if (confirm(Locale.Settings.ChatHistory.ImportConfirm)) {
+                onClick={async () => {
+                  if (
+                    await showConfirm(Locale.Settings.ChatHistory.ImportConfirm)
+                  ) {
                     importHistory();
                   }
                 }}
