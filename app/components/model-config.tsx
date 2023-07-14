@@ -131,6 +131,21 @@ export function ModelConfigList(props: {
       </ListItem>
 
       <ListItem
+        title={Locale.Settings.Stream.Title}
+        subTitle={Locale.Settings.Stream.SubTitle}
+      >
+        <input
+          type="checkbox"
+          checked={props.modelConfig.stream}
+          onChange={(e) =>
+            props.updateConfig(
+              (config) => (config.stream = e.currentTarget.checked),
+            )
+          }
+        ></input>
+      </ListItem>
+
+      <ListItem
         title={Locale.Settings.InjectSystemPrompts.Title}
         subTitle={Locale.Settings.InjectSystemPrompts.SubTitle}
       >

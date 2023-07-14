@@ -268,6 +268,10 @@ const en: LocaleType = {
       SubTitle:
         "A larger value decreasing the likelihood to repeat the same line",
     },
+    Stream: {
+      Title: "Personification Response",
+      SubTitle: "Streamed response, simulating a real person",
+    },
   },
   Store: {
     DefaultTopic: "New Conversation",

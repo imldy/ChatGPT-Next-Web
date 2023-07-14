@@ -45,6 +45,7 @@ export const DEFAULT_CONFIG = {
     max_tokens: 2000,
     presence_penalty: 0,
     frequency_penalty: 0,
+    stream: true,
     sendMemory: true,
     historyMessageCount: 4,
     compressMessageLengthThreshold: 1000,
