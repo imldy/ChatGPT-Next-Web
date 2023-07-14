@@ -248,6 +248,10 @@ const cn = {
       Title: "频率惩罚度 (frequency_penalty)",
       SubTitle: "值越大，越有可能降低重复字词",
     },
+    Stream: {
+      Title: "拟人返回内容",
+      SubTitle: "流式返回内容，模拟真人",
+    },
   },
   Store: {
     DefaultTopic: "新的聊天",
