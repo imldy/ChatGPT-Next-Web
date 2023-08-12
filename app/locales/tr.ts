@@ -5,7 +5,7 @@ const tr: PartialLocaleType = {
   WIP: "Çalışma devam ediyor...",
   Error: {
     Unauthorized:
-      "Yetkisiz erişim, lütfen erişim kodunu ayarlar sayfasından giriniz.",
+      "Yetkisiz erişim, lütfen erişim kodunu ayarlar [sayfasından](/#/auth) giriniz.",
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} mesaj`,
@@ -137,6 +137,15 @@ const tr: PartialLocaleType = {
       IsChecking: "Kontrol ediliyor...",
       Check: "Tekrar Kontrol Et",
       NoAccess: "Bakiyeyi kontrol etmek için API anahtarını girin",
+    },
+    ChatHistory: {
+      Title: "Sohbet Geçmişi",
+      SubTitle: "Sohbet geçmişini temizle, içe aktar ve dışa aktar (JSON)",
+      Clear: "Temizle",
+      ClearConfirm: "Tüm sohbet geçmişini silmek istediğinizden emin misiniz?",
+      Import: "İçe Aktar",
+      ImportToast: "Sohbet geçmişi içe aktarıldı!",
+      Export: "Dışa Aktar",
     },
     AccessCode: {
       Title: "Erişim Kodu",

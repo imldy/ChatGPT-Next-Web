@@ -1,4 +1,5 @@
-export const OWNER = "Yidadaa";
+export const OWNER = "imldy";
+export const OWNER_URL = "https://imldy.cn/";
 export const REPO = "ChatGPT-Next-Web";
 export const REPO_URL = `https://github.com/${OWNER}/${REPO}`;
 export const ISSUE_URL = `https://github.com/${OWNER}/${REPO}/issues`;
@@ -25,6 +26,7 @@ export enum SlotID {
 export enum FileName {
   Masks = "masks.json",
   Prompts = "prompts.json",
+  History = "chats.json",
 }
 
 export enum StoreKey {
@@ -41,7 +43,7 @@ export const MAX_SIDEBAR_WIDTH = 500;
 export const MIN_SIDEBAR_WIDTH = 230;
 export const NARROW_SIDEBAR_WIDTH = 100;
 
-export const ACCESS_CODE_PREFIX = "ak-";
+export const ACCESS_CODE_PREFIX = "nk-";
 
 export const LAST_INPUT_KEY = "last-input";
 
@@ -109,3 +111,6 @@ export const DEFAULT_MODELS = [
     available: true,
   },
 ] as const;
+
+export const CHAT_PAGE_SIZE = 15;
+export const MAX_RENDER_MSG_COUNT = 45;

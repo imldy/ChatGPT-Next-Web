@@ -5,7 +5,7 @@ const it: PartialLocaleType = {
   WIP: "Work in progress...",
   Error: {
     Unauthorized:
-      "Accesso non autorizzato, inserire il codice di accesso nella pagina delle impostazioni.",
+      "Accesso non autorizzato, inserire il codice di accesso nella [pagina](/#/auth) delle impostazioni.",
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} messaggi`,
@@ -138,6 +138,15 @@ const it: PartialLocaleType = {
       IsChecking: "Controllando...",
       Check: "Controlla ancora",
       NoAccess: "Inserire la chiave API per controllare il saldo",
+    },
+    ChatHistory: {
+      Title: "Chat History",
+      SubTitle: "Clear, import & export chat history (JSON)",
+      Clear: "Clear",
+      ClearConfirm: "Are you sure to delete all chat history?",
+      Import: "Import",
+      ImportToast: "Chat history imported!",
+      Export: "Export",
     },
     AccessCode: {
       Title: "Codice d'accesso",

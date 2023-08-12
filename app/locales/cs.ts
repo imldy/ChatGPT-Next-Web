@@ -5,7 +5,7 @@ const cs: PartialLocaleType = {
   WIP: "V přípravě...",
   Error: {
     Unauthorized:
-      "Neoprávněný přístup, zadejte přístupový kód na stránce nastavení.",
+      "Neoprávněný přístup, zadejte přístupový kód na [stránce](/#/auth) nastavení.",
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} zpráv`,
@@ -137,6 +137,17 @@ const cs: PartialLocaleType = {
       IsChecking: "Kontroluji...",
       Check: "Zkontrolovat",
       NoAccess: "Pro kontrolu zůstatku zadejte klíč API",
+    },
+    ChatHistory: {
+      Title: "Chat History",
+      SubTitle: "Clear, import & export chat history (JSON)",
+      Clear: "Clear",
+      ClearConfirm: "Are you sure to delete all chat history?",
+      Import: "Import",
+      ImportConfirm:
+        "Confirm to import and overwrite the existing chat history?",
+      ImportToast: "Chat history imported!",
+      Export: "Export",
     },
     AccessCode: {
       Title: "Přístupový kód",

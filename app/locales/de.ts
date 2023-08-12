@@ -5,7 +5,7 @@ const de: PartialLocaleType = {
   WIP: "In Bearbeitung...",
   Error: {
     Unauthorized:
-      "Unbefugter Zugriff, bitte geben Sie den Zugangscode auf der Einstellungsseite ein.",
+      "Unbefugter Zugriff, bitte geben Sie den Zugangscode auf der [Einstellungsseite](/#/auth) ein.",
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} Nachrichten`,
@@ -138,6 +138,15 @@ const de: PartialLocaleType = {
       IsChecking: "Wird überprüft...",
       Check: "Erneut prüfen",
       NoAccess: "API-Schlüssel eingeben, um den Kontostand zu überprüfen",
+    },
+    ChatHistory: {
+      Title: "Chat-Verlauf",
+      SubTitle: "Chat-Verlauf löschen, importieren & exportieren (JSON)",
+      Clear: "Löschen",
+      ClearConfirm: "Möchten Sie wirklich alle Chat-Verläufe löschen?",
+      Import: "Importieren",
+      ImportToast: "Chat-Verlauf importiert!",
+      Export: "Exportieren",
     },
     AccessCode: {
       Title: "Zugangscode",

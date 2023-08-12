@@ -4,7 +4,7 @@ import type { PartialLocaleType } from "./index";
 const tw: PartialLocaleType = {
   WIP: "該功能仍在開發中……",
   Error: {
-    Unauthorized: "目前您的狀態是未授權，請前往設定頁面輸入授權碼。",
+    Unauthorized: "目前您的狀態是未授權，請前往[設定頁面](/#/auth)輸入授權碼。",
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} 條對話`,
@@ -133,6 +133,16 @@ const tw: PartialLocaleType = {
       IsChecking: "正在檢查…",
       Check: "重新檢查",
       NoAccess: "輸入API Key查看餘額",
+    },
+    ChatHistory: {
+      Title: "聊天紀錄",
+      SubTitle: "清空，匯入/匯出聊天紀錄（JSON 檔案）",
+      Clear: "清空",
+      ClearConfirm: "確認刪除所有聊天紀錄？",
+      Import: "匯入",
+      ImportConfirm: "確認匯入並覆蓋現有的聊天記錄嗎？",
+      ImportToast: "聊天紀錄匯入成功！",
+      Export: "匯出",
     },
     AccessCode: {
       Title: "授權碼",

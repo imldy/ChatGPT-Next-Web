@@ -5,7 +5,7 @@ const es: PartialLocaleType = {
   WIP: "En construcción...",
   Error: {
     Unauthorized:
-      "Acceso no autorizado, por favor ingrese el código de acceso en la página de configuración.",
+      "Acceso no autorizado, por favor ingrese el código de acceso en la [página](/#/auth) de configuración.",
   },
   ChatItem: {
     ChatItemCount: (count: number) => `${count} mensajes`,
@@ -137,6 +137,15 @@ const es: PartialLocaleType = {
       IsChecking: "Comprobando...",
       Check: "Comprobar de nuevo",
       NoAccess: "Introduzca la clave API para comprobar el saldo",
+    },
+    ChatHistory: {
+      Title: "Chat History",
+      SubTitle: "Clear, import & export chat history (JSON)",
+      Clear: "Clear",
+      ClearConfirm: "Are you sure to delete all chat history?",
+      Import: "Import",
+      ImportToast: "Chat history imported!",
+      Export: "Export",
     },
     AccessCode: {
       Title: "Código de acceso",

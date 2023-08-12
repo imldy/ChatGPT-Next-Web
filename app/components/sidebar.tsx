@@ -10,6 +10,7 @@ import AddIcon from "../icons/add.svg";
 import CloseIcon from "../icons/close.svg";
 import MaskIcon from "../icons/mask.svg";
 import PluginIcon from "../icons/plugin.svg";
+import DragIcon from "../icons/drag.svg";
 
 import Locale from "../locales";
 
@@ -21,6 +22,8 @@ import {
   NARROW_SIDEBAR_WIDTH,
   Path,
   REPO_URL,
+  OWNER,
+  OWNER_URL,
 } from "../constant";
 
 import { Link, useNavigate } from "react-router-dom";
@@ -120,7 +123,7 @@ export function SideBar(props: { className?: string }) {
           ChatGPT Next
         </div>
         <div className={styles["sidebar-sub-title"]}>
-          Build your own AI assistant.
+          Hello! 欢迎使用 <a href={OWNER_URL}>{OWNER}</a> 的 ChatGPT
         </div>
         <div className={styles["sidebar-logo"] + " no-dark"}>
           <ChatGptIcon />
@@ -198,7 +201,9 @@ export function SideBar(props: { className?: string }) {
       <div
         className={styles["sidebar-drag"]}
         onMouseDown={(e) => onDragMouseDown(e as any)}
-      ></div>
+      >
+        <DragIcon />
+      </div>
     </div>
   );
 }
