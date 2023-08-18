@@ -11,6 +11,7 @@ import {
   DEFAULT_INPUT_TEMPLATE,
   DEFAULT_SYSTEM_TEMPLATE,
   StoreKey,
+  GENERATE_TITLE_OPTION,
 } from "../constant";
 import { api, RequestMessage } from "../client/api";
 import { ChatControllerPool } from "../client/controller";
@@ -62,6 +63,8 @@ export const BOT_HELLO: ChatMessage = createMessage({
   content: Locale.Store.BotHello,
 });
 
+const config = useAppConfig.getState();
+
 function createEmptySession(): ChatSession {
   return {
     id: nanoid(),
@@ -92,6 +95,8 @@ interface ChatStore {
   nextSession: (delta: number) => void;
   onNewMessage: (message: ChatMessage) => void;
   onUserInput: (content: string) => Promise<void>;
+  generateSessionTopicWithAI: () => void;
+  generateSessionTopicWithPrompt: (prompt: string) => void;
   summarizeSession: () => void;
   updateStat: (message: ChatMessage) => void;
   updateCurrentSession: (updater: (session: ChatSession) => void) => void;
@@ -272,6 +277,11 @@ export const useChatStore = create<ChatStore>()(
           session.lastUpdate = Date.now();
         });
         get().updateStat(message);
+
+        if (config.generateTitle.selected === GENERATE_TITLE_OPTION.ai) {
+          get().generateSessionTopicWithAI();
+        }
+
         get().summarizeSession();
       },
 
@@ -281,6 +291,13 @@ export const useChatStore = create<ChatStore>()(
 
         const userContent = fillTemplateWith(content, modelConfig);
         console.log("[User Input] after template: ", userContent);
+
+        if (
+          config.generateTitle.selected === GENERATE_TITLE_OPTION.prompt &&
+          session.topic === DEFAULT_TOPIC
+        ) {
+          get().generateSessionTopicWithPrompt(userContent);
+        }
 
         const userMessage: ChatMessage = createMessage({
           role: "user",
@@ -479,7 +496,7 @@ export const useChatStore = create<ChatStore>()(
         });
       },
 
-      summarizeSession() {
+      generateSessionTopicWithAI() {
         const session = get().currentSession();
 
         // remove error messages if any
@@ -511,6 +528,28 @@ export const useChatStore = create<ChatStore>()(
             },
           });
         }
+      },
+
+      generateSessionTopicWithPrompt(prompt: string) {
+        // The entire user input cannot be used as the title and needs to be truncated.
+        // Possible solutions for future revisions:
+        // 1. Select an appropriate length calculation method, considering the unfairness in counting the length of words and Chinese characters (words usually contain more letters, while Chinese characters can express the same meaning more concisely).
+        // 2. Consider using paragraph symbols (.,。, or other punctuation marks) to divide the input and select the first paragraph block.
+
+        get().updateCurrentSession(
+          (session) =>
+            (session.topic =
+              prompt.length > 0
+                ? trimTopic(prompt).slice(0, 50)
+                : DEFAULT_TOPIC),
+        );
+      },
+
+      summarizeSession() {
+        const session = get().currentSession();
+
+        // remove error messages if any
+        const messages = session.messages;
 
         const modelConfig = session.mask.modelConfig;
         const summarizeIndex = Math.max(

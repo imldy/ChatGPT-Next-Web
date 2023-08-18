@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 import { LLMModel } from "../client/api";
 import { getClientConfig } from "../config/client";
 import { DEFAULT_INPUT_TEMPLATE, DEFAULT_MODELS, StoreKey } from "../constant";
+import { GENERATE_TITLE_OPTION } from "../constant";
 
 export type ModelType = (typeof DEFAULT_MODELS)[number]["name"];
 
@@ -28,6 +29,10 @@ export const DEFAULT_CONFIG = {
   tightBorder: !!getClientConfig()?.isApp,
   sendPreviewBubble: true,
   sidebarWidth: 300,
+
+  generateTitle: {
+    selected: GENERATE_TITLE_OPTION.ai as GENERATE_TITLE_OPTION,
+  },
 
   disablePromptHint: false,
 
@@ -147,7 +152,7 @@ export const useAppConfig = create<ChatConfigStore>()(
     }),
     {
       name: StoreKey.Config,
-      version: 3.6,
+      version: 3.7,
       migrate(persistedState, version) {
         const state = persistedState as ChatConfig;
 
@@ -168,6 +173,10 @@ export const useAppConfig = create<ChatConfigStore>()(
 
         if (version < 3.6) {
           state.modelConfig.enableInjectSystemPrompts = true;
+        }
+
+        if (version < 3.7) {
+          state.generateTitle.selected = GENERATE_TITLE_OPTION.ai;
         }
 
         return state as any;
