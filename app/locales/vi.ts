@@ -195,6 +195,9 @@ const vi: PartialLocaleType = {
   Plugin: {
     Name: "Plugin",
   },
+  FineTuned: {
+    Sysmessage: "Bạn là một trợ lý",
+  },
   Mask: {
     Name: "Mẫu",
     Page: {
