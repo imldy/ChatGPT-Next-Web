@@ -12,6 +12,13 @@ import EditIcon from "../icons/edit.svg";
 import EyeIcon from "../icons/eye.svg";
 import DownloadIcon from "../icons/download.svg";
 import UploadIcon from "../icons/upload.svg";
+import ConfigIcon from "../icons/config.svg";
+import ConfirmIcon from "../icons/confirm.svg";
+
+import ConnectionIcon from "../icons/connection.svg";
+import CloudSuccessIcon from "../icons/cloud-success.svg";
+import CloudFailIcon from "../icons/cloud-fail.svg";
+
 import {
   Input,
   List,
@@ -41,9 +48,9 @@ import Locale, {
   changeLang,
   getLang,
 } from "../locales";
-import { copyToClipboard, downloadAs, readFromFile } from "../utils";
+import { copyToClipboard } from "../utils";
 import Link from "next/link";
-import { Path, RELEASE_URL, UPDATE_URL, StoreKey, FileName } from "../constant";
+import { Path, RELEASE_URL, UPDATE_URL } from "../constant";
 import { Prompt, SearchService, usePromptStore } from "../store/prompt";
 import { ErrorBoundary } from "./error";
 import { InputRange } from "./input-range";
@@ -53,6 +60,8 @@ import { getClientConfig } from "../config/client";
 import { useSyncStore } from "../store/sync";
 import { nanoid } from "nanoid";
 import { GENERATE_TITLE_OPTION } from "../constant";
+import { useMaskStore } from "../store/mask";
+import { ProviderType } from "../utils/cloud";
 
 function EditPromptModal(props: { id: string; onClose: () => void }) {
   const promptStore = usePromptStore();
@@ -79,7 +88,7 @@ function EditPromptModal(props: { id: string; onClose: () => void }) {
             readOnly={!prompt.isUser}
             className={styles["edit-prompt-title"]}
             onInput={(e) =>
-              promptStore.update(
+              promptStore.updatePrompt(
                 props.id,
                 (prompt) => (prompt.title = e.currentTarget.value),
               )
@@ -91,7 +100,7 @@ function EditPromptModal(props: { id: string; onClose: () => void }) {
             className={styles["edit-prompt-content"]}
             rows={10}
             onInput={(e) =>
-              promptStore.update(
+              promptStore.updatePrompt(
                 props.id,
                 (prompt) => (prompt.content = e.currentTarget.value),
               )
@@ -131,14 +140,15 @@ function UserPromptModal(props: { onClose?: () => void }) {
         actions={[
           <IconButton
             key="add"
-            onClick={() =>
-              promptStore.add({
+            onClick={() => {
+              const promptId = promptStore.add({
                 id: nanoid(),
                 createdAt: Date.now(),
                 title: "Empty Prompt",
                 content: "Empty Prompt Content",
-              })
-            }
+              });
+              setEditingPromptId(promptId);
+            }}
             icon={<AddIcon />}
             bordered
             text={Locale.Settings.Prompt.Modal.Add}
@@ -245,75 +255,262 @@ function DangerItems() {
   );
 }
 
-function SyncItems() {
+function CheckButton() {
   const syncStore = useSyncStore();
-  const webdav = syncStore.webDavConfig;
 
-  // not ready: https://github.com/Yidadaa/ChatGPT-Next-Web/issues/920#issuecomment-1609866332
-  return null;
+  const couldCheck = useMemo(() => {
+    return syncStore.coundSync();
+  }, [syncStore]);
+
+  const [checkState, setCheckState] = useState<
+    "none" | "checking" | "success" | "failed"
+  >("none");
+
+  async function check() {
+    setCheckState("checking");
+    const valid = await syncStore.check();
+    setCheckState(valid ? "success" : "failed");
+  }
+
+  if (!couldCheck) return null;
 
   return (
-    <List>
-      <ListItem
-        title={"上次同步：" + new Date().toLocaleString()}
-        subTitle={"20 次对话，100 条消息，200 提示词，20 面具"}
+    <IconButton
+      text="检查可用性"
+      bordered
+      onClick={check}
+      icon={
+        checkState === "none" ? (
+          <ConnectionIcon />
+        ) : checkState === "checking" ? (
+          <LoadingIcon />
+        ) : checkState === "success" ? (
+          <CloudSuccessIcon />
+        ) : checkState === "failed" ? (
+          <CloudFailIcon />
+        ) : (
+          <ConnectionIcon />
+        )
+      }
+    ></IconButton>
+  );
+}
+
+function SyncConfigModal(props: { onClose?: () => void }) {
+  const syncStore = useSyncStore();
+
+  return (
+    <div className="modal-mask">
+      <Modal
+        title={Locale.Settings.Sync.Config.Modal.Title}
+        onClose={() => props.onClose?.()}
+        actions={[
+          <CheckButton key="check" />,
+          <IconButton
+            key="confirm"
+            onClick={props.onClose}
+            icon={<ConfirmIcon />}
+            bordered
+            text={Locale.UI.Confirm}
+          />,
+        ]}
       >
-        <IconButton
-          icon={<ResetIcon />}
-          text="同步"
-          onClick={() => {
-            syncStore.check().then(console.log);
-          }}
-        />
-      </ListItem>
+        <List>
+          <ListItem
+            title={Locale.Settings.Sync.Config.SyncType.Title}
+            subTitle={Locale.Settings.Sync.Config.SyncType.SubTitle}
+          >
+            <select
+              value={syncStore.provider}
+              onChange={(e) => {
+                syncStore.update(
+                  (config) =>
+                    (config.provider = e.target.value as ProviderType),
+                );
+              }}
+            >
+              {Object.entries(ProviderType).map(([k, v]) => (
+                <option value={v} key={k}>
+                  {k}
+                </option>
+              ))}
+            </select>
+          </ListItem>
 
-      <ListItem
-        title={"本地备份"}
-        subTitle={"20 次对话，100 条消息，200 提示词，20 面具"}
-      ></ListItem>
+          <ListItem
+            title={Locale.Settings.Sync.Config.Proxy.Title}
+            subTitle={Locale.Settings.Sync.Config.Proxy.SubTitle}
+          >
+            <input
+              type="checkbox"
+              checked={syncStore.useProxy}
+              onChange={(e) => {
+                syncStore.update(
+                  (config) => (config.useProxy = e.currentTarget.checked),
+                );
+              }}
+            ></input>
+          </ListItem>
+          {syncStore.useProxy ? (
+            <ListItem
+              title={Locale.Settings.Sync.Config.ProxyUrl.Title}
+              subTitle={Locale.Settings.Sync.Config.ProxyUrl.SubTitle}
+            >
+              <input
+                type="text"
+                value={syncStore.proxyUrl}
+                onChange={(e) => {
+                  syncStore.update(
+                    (config) => (config.proxyUrl = e.currentTarget.value),
+                  );
+                }}
+              ></input>
+            </ListItem>
+          ) : null}
+        </List>
 
-      <ListItem
-        title={"Web Dav Server"}
-        subTitle={Locale.Settings.AccessCode.SubTitle}
-      >
-        <input
-          value={webdav.server}
-          type="text"
-          placeholder={"https://example.com"}
-          onChange={(e) => {
-            syncStore.update(
-              (config) => (config.server = e.currentTarget.value),
-            );
-          }}
-        />
-      </ListItem>
+        {syncStore.provider === ProviderType.WebDAV && (
+          <>
+            <List>
+              <ListItem title={Locale.Settings.Sync.Config.WebDav.Endpoint}>
+                <input
+                  type="text"
+                  value={syncStore.webdav.endpoint}
+                  onChange={(e) => {
+                    syncStore.update(
+                      (config) =>
+                        (config.webdav.endpoint = e.currentTarget.value),
+                    );
+                  }}
+                ></input>
+              </ListItem>
 
-      <ListItem title="Web Dav User Name" subTitle="user name here">
-        <input
-          value={webdav.username}
-          type="text"
-          placeholder={"username"}
-          onChange={(e) => {
-            syncStore.update(
-              (config) => (config.username = e.currentTarget.value),
-            );
-          }}
-        />
-      </ListItem>
+              <ListItem title={Locale.Settings.Sync.Config.WebDav.UserName}>
+                <input
+                  type="text"
+                  value={syncStore.webdav.username}
+                  onChange={(e) => {
+                    syncStore.update(
+                      (config) =>
+                        (config.webdav.username = e.currentTarget.value),
+                    );
+                  }}
+                ></input>
+              </ListItem>
+              <ListItem title={Locale.Settings.Sync.Config.WebDav.Password}>
+                <PasswordInput
+                  value={syncStore.webdav.password}
+                  onChange={(e) => {
+                    syncStore.update(
+                      (config) =>
+                        (config.webdav.password = e.currentTarget.value),
+                    );
+                  }}
+                ></PasswordInput>
+              </ListItem>
+            </List>
+          </>
+        )}
 
-      <ListItem title="Web Dav Password" subTitle="password here">
-        <input
-          value={webdav.password}
-          type="text"
-          placeholder={"password"}
-          onChange={(e) => {
-            syncStore.update(
-              (config) => (config.password = e.currentTarget.value),
-            );
-          }}
-        />
-      </ListItem>
-    </List>
+        {syncStore.provider === ProviderType.UpStash && (
+          <List>
+            <ListItem title={Locale.WIP}></ListItem>
+          </List>
+        )}
+      </Modal>
+    </div>
+  );
+}
+
+function SyncItems() {
+  const syncStore = useSyncStore();
+  const chatStore = useChatStore();
+  const promptStore = usePromptStore();
+  const maskStore = useMaskStore();
+  const couldSync = useMemo(() => {
+    return syncStore.coundSync();
+  }, [syncStore]);
+
+  const [showSyncConfigModal, setShowSyncConfigModal] = useState(false);
+
+  const stateOverview = useMemo(() => {
+    const sessions = chatStore.sessions;
+    const messageCount = sessions.reduce((p, c) => p + c.messages.length, 0);
+
+    return {
+      chat: sessions.length,
+      message: messageCount,
+      prompt: Object.keys(promptStore.prompts).length,
+      mask: Object.keys(maskStore.masks).length,
+    };
+  }, [chatStore.sessions, maskStore.masks, promptStore.prompts]);
+
+  return (
+    <>
+      <List>
+        <ListItem
+          title={Locale.Settings.Sync.CloudState}
+          subTitle={
+            syncStore.lastProvider
+              ? `${new Date(syncStore.lastSyncTime).toLocaleString()} [${
+                  syncStore.lastProvider
+                }]`
+              : Locale.Settings.Sync.NotSyncYet
+          }
+        >
+          <div style={{ display: "flex" }}>
+            <IconButton
+              icon={<ConfigIcon />}
+              text={Locale.UI.Config}
+              onClick={() => {
+                setShowSyncConfigModal(true);
+              }}
+            />
+            {couldSync && (
+              <IconButton
+                icon={<ResetIcon />}
+                text={Locale.UI.Sync}
+                onClick={async () => {
+                  try {
+                    await syncStore.sync();
+                    showToast(Locale.Settings.Sync.Success);
+                  } catch (e) {
+                    showToast(Locale.Settings.Sync.Fail);
+                    console.error("[Sync]", e);
+                  }
+                }}
+              />
+            )}
+          </div>
+        </ListItem>
+
+        <ListItem
+          title={Locale.Settings.Sync.LocalState}
+          subTitle={Locale.Settings.Sync.Overview(stateOverview)}
+        >
+          <div style={{ display: "flex" }}>
+            <IconButton
+              icon={<UploadIcon />}
+              text={Locale.UI.Export}
+              onClick={() => {
+                syncStore.export();
+              }}
+            />
+            <IconButton
+              icon={<DownloadIcon />}
+              text={Locale.UI.Import}
+              onClick={() => {
+                syncStore.import();
+              }}
+            />
+          </div>
+        </ListItem>
+      </List>
+
+      {showSyncConfigModal && (
+        <SyncConfigModal onClose={() => setShowSyncConfigModal(false)} />
+      )}
+    </>
   );
 }
 
@@ -322,7 +519,6 @@ export function Settings() {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const config = useAppConfig();
   const updateConfig = config.update;
-  const chatStore = useChatStore();
 
   const updateStore = useUpdateStore();
   const [checkingUpdate, setCheckingUpdate] = useState(false);
@@ -389,33 +585,6 @@ export function Settings() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // clear chat history
-  const clearHistory = () => {
-    localStorage.removeItem(StoreKey.Chat);
-    location.reload();
-  };
-
-  // download chat history
-  const chatHistory = JSON.parse(localStorage.getItem(StoreKey.Chat) ?? "");
-  const downloadHistory = () => {
-    downloadAs(JSON.stringify(chatHistory), FileName.History);
-  };
-
-  // upload chat history
-  const importHistory = () => {
-    readFromFile().then((content) => {
-      try {
-        const importChatHistory = JSON.parse(content);
-        localStorage.setItem(StoreKey.Chat, JSON.stringify(importChatHistory));
-        console.log(`[Chat History] Successfully imported!`);
-        showToast(Locale.Settings.ChatHistory.ImportToast);
-        location.reload();
-      } catch (e) {
-        console.error(`[Chat History] Error importing chat history: ${e}`);
-      }
-    });
-  };
 
   const clientConfig = useMemo(() => getClientConfig(), []);
   const showAccessCode = enabledAccessControl && !clientConfig?.isApp;
@@ -602,6 +771,8 @@ export function Settings() {
           </ListItem>
         </List>
 
+        <SyncItems />
+
         <List>
           <ListItem
             title={Locale.Settings.Mask.Splash.Title}
@@ -666,44 +837,6 @@ export function Settings() {
               text={Locale.Settings.Prompt.Edit}
               onClick={() => setShowPromptModal(true)}
             />
-          </ListItem>
-        </List>
-
-        <List>
-          <ListItem
-            title={Locale.Settings.ChatHistory.Title}
-            subTitle={Locale.Settings.ChatHistory.SubTitle}
-          >
-            <div className={"password-input-container"}>
-              <IconButton
-                icon={<ClearIcon />}
-                text={Locale.Settings.ChatHistory.Clear}
-                // onClick={() => clearHistory()}
-                onClick={async () => {
-                  if (
-                    await showConfirm(Locale.Settings.ChatHistory.ClearConfirm)
-                  ) {
-                    chatStore.clearHistory();
-                  }
-                }}
-              />
-              <IconButton
-                icon={<UploadIcon />}
-                text={Locale.Settings.ChatHistory.Import}
-                onClick={async () => {
-                  if (
-                    await showConfirm(Locale.Settings.ChatHistory.ImportConfirm)
-                  ) {
-                    importHistory();
-                  }
-                }}
-              />
-              <IconButton
-                icon={<DownloadIcon />}
-                text={Locale.Settings.ChatHistory.Export}
-                onClick={downloadHistory}
-              />
-            </div>
           </ListItem>
         </List>
 
@@ -799,8 +932,6 @@ export function Settings() {
             ></input>
           </ListItem>
         </List>
-
-        <SyncItems />
 
         <List>
           <ModelConfigList
