@@ -1,6 +1,11 @@
 import { LLMModel } from "../client/api";
 import { getClientConfig } from "../config/client";
-import { DEFAULT_INPUT_TEMPLATE, DEFAULT_MODELS, StoreKey } from "../constant";
+import {
+  DEFAULT_INPUT_TEMPLATE,
+  DEFAULT_MODELS,
+  DEFAULT_SIDEBAR_WIDTH,
+  StoreKey,
+} from "../constant";
 import { GENERATE_TITLE_OPTION } from "../constant";
 import { createPersistStore } from "../utils/store";
 
@@ -29,7 +34,7 @@ export const DEFAULT_CONFIG = {
   theme: Theme.Auto as Theme,
   tightBorder: !!getClientConfig()?.isApp,
   sendPreviewBubble: true,
-  sidebarWidth: 300,
+  sidebarWidth: DEFAULT_SIDEBAR_WIDTH,
 
   generateTitle: {
     selected: GENERATE_TITLE_OPTION.ai as GENERATE_TITLE_OPTION,
