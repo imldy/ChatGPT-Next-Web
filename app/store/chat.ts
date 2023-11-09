@@ -7,8 +7,8 @@ import { createEmptyMask, Mask } from "./mask";
 import {
   DEFAULT_INPUT_TEMPLATE,
   DEFAULT_SYSTEM_TEMPLATE,
+  KnowledgeCutOffDate,
   StoreKey,
-  GENERATE_TITLE_OPTION,
   SUMMARIZE_MODEL,
 } from "../constant";
 import { api, RequestMessage } from "../client/api";
@@ -87,42 +87,16 @@ function getSummarizeModel(currentModel: string) {
   return currentModel.startsWith("gpt") ? SUMMARIZE_MODEL : currentModel;
 }
 
-interface ChatStore {
-  sessions: ChatSession[];
-  currentSessionIndex: number;
-  clearSessions: () => void;
-  moveSession: (from: number, to: number) => void;
-  selectSession: (index: number) => void;
-  newSession: (mask?: Mask) => void;
-  deleteSession: (index: number) => void;
-  currentSession: () => ChatSession;
-  nextSession: (delta: number) => void;
-  onNewMessage: (message: ChatMessage) => void;
-  onUserInput: (content: string) => Promise<void>;
-  generateSessionTopicWithAI: () => void;
-  generateSessionTopicWithPrompt: (prompt: string) => void;
-  summarizeSession: () => void;
-  updateStat: (message: ChatMessage) => void;
-  updateCurrentSession: (updater: (session: ChatSession) => void) => void;
-  updateMessage: (
-    sessionIndex: number,
-    messageIndex: number,
-    updater: (message?: ChatMessage) => void,
-  ) => void;
-  resetSession: () => void;
-  getMessagesWithMemory: () => ChatMessage[];
-  getMemoryPrompt: () => ChatMessage;
-
-  clearHistory: () => void;
-  clearAllData: () => void;
-}
-
 function countMessages(msgs: ChatMessage[]) {
   return msgs.reduce((pre, cur) => pre + estimateTokenLength(cur.content), 0);
 }
 
 function fillTemplateWith(input: string, modelConfig: ModelConfig) {
+  let cutoff =
+    KnowledgeCutOffDate[modelConfig.model] ?? KnowledgeCutOffDate.default;
+
   const vars = {
+    cutoff,
     model: modelConfig.model,
     time: new Date().toLocaleString(),
     lang: getLang(),
