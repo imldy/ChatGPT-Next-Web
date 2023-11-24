@@ -124,11 +124,7 @@ const cs: PartialLocaleType = {
       SubTitle:
         "Komprese proběhne, pokud délka nekomprimovaných zpráv přesáhne tuto hodnotu",
     },
-    Token: {
-      Title: "API klíč",
-      SubTitle: "Použitím klíče ignorujete omezení přístupového kódu",
-      Placeholder: "Klíč API OpenAI",
-    },
+
     Usage: {
       Title: "Stav účtu",
       SubTitle(used: any, total: any) {
@@ -138,22 +134,7 @@ const cs: PartialLocaleType = {
       Check: "Zkontrolovat",
       NoAccess: "Pro kontrolu zůstatku zadejte klíč API",
     },
-    ChatHistory: {
-      Title: "Chat History",
-      SubTitle: "Clear, import & export chat history (JSON)",
-      Clear: "Clear",
-      ClearConfirm: "Are you sure to delete all chat history?",
-      Import: "Import",
-      ImportConfirm:
-        "Confirm to import and overwrite the existing chat history?",
-      ImportToast: "Chat history imported!",
-      Export: "Export",
-    },
-    AccessCode: {
-      Title: "Přístupový kód",
-      SubTitle: "Kontrola přístupu povolena",
-      Placeholder: "Potřebujete přístupový kód",
-    },
+
     Model: "Model",
     Temperature: {
       Title: "Teplota",

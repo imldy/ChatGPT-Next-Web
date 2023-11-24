@@ -125,11 +125,7 @@ const ru: PartialLocaleType = {
       SubTitle:
         "Будет сжимать, если длина несжатых сообщений превышает указанное значение",
     },
-    Token: {
-      Title: "API ключ",
-      SubTitle: "Используйте свой ключ, чтобы игнорировать лимит доступа",
-      Placeholder: "API ключ OpenAI",
-    },
+
     Usage: {
       Title: "Баланс аккаунта",
       SubTitle(used: any, total: any) {
@@ -139,20 +135,7 @@ const ru: PartialLocaleType = {
       Check: "Проверить",
       NoAccess: "Введите API ключ, чтобы проверить баланс",
     },
-    ChatHistory: {
-      Title: "История чата",
-      SubTitle: "Очистить, импортировать и экспортировать историю чата (JSON)",
-      Clear: "Очистить",
-      ClearConfirm: "Вы уверены, что хотите удалить всю историю чата?",
-      Import: "Импортировать",
-      ImportToast: "История чата импортирована!",
-      Export: "Экспортировать",
-    },
-    AccessCode: {
-      Title: "Код доступа",
-      SubTitle: "Контроль доступа включен",
-      Placeholder: "Требуется код доступа",
-    },
+
     Model: "Модель",
     Temperature: {
       Title: "Температура",
