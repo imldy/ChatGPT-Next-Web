@@ -1,10 +1,10 @@
 import { SubmitKey } from "../store/config";
-import { LocaleType } from "../locales/index";
+import { PartialLocaleType } from "../locales/index";
 import { getClientConfig } from "../config/client";
 
 const isApp = !!getClientConfig()?.isApp;
 
-const pt: LocaleType = {
+const pt: PartialLocaleType = {
   WIP: "Em breve...",
   Error: {
     Unauthorized: isApp
@@ -176,10 +176,6 @@ const pt: LocaleType = {
     SendPreviewBubble: {
       Title: "Bolha de Pré-visualização de Envio",
       SubTitle: "Pré-visualizar markdown na bolha",
-    },
-    AutoGenerateTitle: {
-      Title: "Gerar Título Automaticamente",
-      SubTitle: "Gerar um título adequado baseado no conteúdo da conversa",
     },
     Sync: {
       CloudState: "Última Atualização",
