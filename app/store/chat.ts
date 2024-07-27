@@ -643,12 +643,7 @@ export const useChatStore = createPersistStore(
           modelConfig.compressMessageLengthThreshold,
         );
 
-        var api: ClientApi;
-        if (modelConfig.model === "gemini-pro") {
-          api = new ClientApi(ModelProvider.GeminiPro);
-        } else {
-          api = new ClientApi(ModelProvider.GPT);
-        }
+        const api: ClientApi = getClientApi(modelConfig.providerName);
 
         if (
           historyMsgLength > modelConfig.compressMessageLengthThreshold &&
